@@ -1,11 +1,8 @@
+#include <Multiboot.h>
 #include <stdio.h>
-#include <vector>
 
-using namespace std;
-
-extern "C" int main(void) 
+extern "C" int _main(multiboot_info_t* mbd, unsigned int magic)
 {
-	vector<int> v;
-	printf("Test\n");
+	printf("Hello world");
 	return 0;
 }

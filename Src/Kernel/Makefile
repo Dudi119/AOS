@@ -4,7 +4,7 @@ PROJ_DIR = $(HOME)/Projects/AOS
 CC  = clang
 LINKER = ld
 # Compiler options
-CCOPTS  = -fno-stack-protector -m32 -march=i386 --target=i386-elf -g #-std=c++11
+CCOPTS  = -fno-stack-protector -m32 -march=i386 --target=i386-elf -g -std=c++11
 LINKER_SCRIPT = $(PROJ_DIR)/Linker.ld
 LINKEROPTS = -nostdlib -melf_i386 --script=$(LINKER_SCRIPT)
 # External Libraries
@@ -19,8 +19,9 @@ LIBCXX = $(PROJ_DIR)/Runtime/Libcxx/libc++.a $(PROJ_DIR)/Runtime/Libcxx/libc++ab
 OS_OBJECTS = BootStrap.o KernelMain.o Syscalls.o StackProtector.o
 INC_NEWLIB= $(PROJ_DIR)/Runtime/Newlib/include
 INC_LIBCXX = $(PROJ_DIR)/Runtime/Libcxx/include
+INC_MULTIBOOT = $(PROJ_DIR)/Src/MultiBoot
 
-INCLUDES = -I$(INC_NEWLIB) -I$(INC_LIBCXX)
+INCLUDES = -I$(INC_NEWLIB) -I$(INC_LIBCXX) -I$(INC_MULTIBOOT)
 LIBS = $(LIBCXX) $(LIBC_OBJ) $(LIBGCC) 
 
 AOS: $(OS_OBJECTS) 
@@ -29,6 +30,6 @@ AOS: $(OS_OBJECTS)
 
 %.o: %.cpp
 	$(CC) $(INCLUDES) -c $(CCOPTS) $< -o $@ 
-%.o: %.s
+%.o: %.asm
 	@echo "\n"
-	$(CC) -c $(CCOPTS) $< -o $@
+	nasm -f elf $< -o $@
