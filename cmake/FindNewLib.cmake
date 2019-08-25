@@ -1,0 +1,11 @@
+find_path(NEWLIB_LIBRARY_DIR NAMES libc.a libm.a PATHS ${AOS_SYSROOT}/i686-elf/lib NO_DEFAULT_PATH)
+find_file(NEWLIB_FILES_DIR NAMES stdio.h PATHS ${AOS_SYSROOT}/include/newlib NO_DEFAULT_PATH)
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(NEWLIB REQUIRED_VARS NEWLIB_LIBRARY_DIR NEWLIB_FILES_DIR)
+
+if(NEWLIB_FOUND)
+    message(STATUS "Found newlib dir - ${Green}${NEWLIB_LIBRARY_DIR}${ColourReset}")
+    message(STATUS "Found newlib include dir - ${Green}${NEWLIB_FILES_DIR}${ColourReset}")
+else()
+    message(WARNING ${Red}"NEWLIB not found${ColourReset}")
+endif()
