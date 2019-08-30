@@ -1,9 +1,11 @@
 find_program(GCC_BINARY_DIR NAMES ${AOS_C_COMPILER} ${AOS_CXX_COMPILER} PATHS ${AOS_SYSROOT}/bin NO_DEFAULT_PATH)
+find_file(GCC_FILES_DIR NAMES stddef.h PATHS ${AOS_SYSROOT}/${AOS_TARGET}/include/gcc NO_DEFAULT_PATH)
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(GCC REQUIRED_VARS GCC_BINARY_DIR)
+find_package_handle_standard_args(GCC REQUIRED_VARS GCC_BINARY_DIR GCC_FILES_DIR)
 
 if(GCC_FOUND)
     message(STATUS "Found gcc binary dir - ${Green}${GCC_BINARY_DIR}${ColourReset}")
+    message(STATUS "Found gcc include dir - ${Green}${GCC_FILES_DIR}${ColourReset}")
 else()
     message(WARNING ${Red}"GCC not found${ColourReset}")
 endif()

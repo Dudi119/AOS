@@ -27,6 +27,7 @@ extern "C" int fstat(int, struct stat* st) {
   return 0;
 }
 
+
 extern "C" int getpid() {
   return 1;
 }
