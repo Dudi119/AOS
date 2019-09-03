@@ -3,14 +3,19 @@
 .set MAGIC,    0x1BADB002
 .set FLAGS,    MBALIGN | MEMINFO
 .set CHECKSUM, -(MAGIC + FLAGS)
+.set null_selector, 0x0
+.set code_segment_selector, 0x8
+.set data_segment_selector, 0x10
 
 .section .multiboot
 .align 4
 .4byte MAGIC
 .4byte FLAGS
 .4byte CHECKSUM
+
 .extern _main
 .section .text
+.code32
 //GDT for flat memory model
 .align 4
 gdtr:
@@ -18,40 +23,45 @@ gdtr:
 	.4byte gdt32mod
 gdt32mod:
 	//Entry 0x0: Null desriptor
-	.8byte 0x0
+	.8byte 0x0000000000000000
 	//Entry 0x8: Code segment
 	.2byte 0xffff		       //Limit
   	.2byte 0x0000		       //Base 15:00
 	.byte  0x00			       //Base 23:16
-	.2byte 0xcf9a		       //Flags
+	.byte  0x9a		           //Flags
+	.byte  0xcf		           //Flags
 	.byte  0x00			       //Base 32:24
 	//Entry 0x10: Data segment
 	.2byte 0xffff		       //Limit
 	.2byte 0x0000		       //Base 15:00
 	.byte  0x00			       //Base 23:16
-	.2byte 0xcf92		       //Flags
+	.byte  0x92		           //Flags
+	.byte  0xcf		           //Flags
 	.byte  0x00			       //Base 32:24
 gdt32mod_end:
 	.byte  0x00
 
-.set stack_top, 0xA0000
+.set stack_top, 0xa0000
 .global _start
 .type _start, @function
 _start:
-	mov $0x1, %eax
 	lgdt (gdtr)
+	ljmp $code_segment_selector, $_protected_mod
+_protected_mod:
 	// Set up 32-bit data segment
-	mov $0x10, %eax //move data segment selector
+	mov $data_segment_selector, %ecx //move data segment selector
 	// Set up stack
-	mov %eax, %ss
+	mov %ecx, %ss
 	mov $stack_top, %esp //set stack top, occupies about ~600kb
 	// set up the current frame
 	mov $stack_top, %ebp
 	// Set up data segment
-	mov %eax, %ds
-	mov %eax, %es
-	mov %eax, %fs
-	mov %eax, %gs
+	mov %ecx, %ds
+    // Nulyfing all the general selectors
+	mov $null_selector, %ecx
+	mov %ecx, %es
+	mov %ecx, %fs
+	mov %ecx, %gs
 	//Fetch bootloader memory layout data
 	push %eax //Push multiboot pointer
 	push %ebx //Push magic value

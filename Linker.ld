@@ -37,5 +37,5 @@ SECTIONS
 		*(.bss)
 	}
 
-	_ELF_END = .;
+	_end = .;
 }

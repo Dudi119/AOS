@@ -18,6 +18,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. */
 #define MULTIBOOT_HEADER_MAGIC          0x1BADB002
 
 /* The flags for the Multiboot header. */
+#pragma once
 #ifdef __ELF__
 # define MULTIBOOT_HEADER_FLAGS         0x00000003
 #else
