@@ -3,6 +3,7 @@
 #include <fcntl.h>
 #include <string.h>
 #include <signal.h>
+#include "os.h"
 
 extern "C" void _exit(int) {
   
@@ -23,7 +24,9 @@ extern "C" int fork() {
   return -1;
 }
 
-extern "C" int fstat(int, struct stat* st) {
+extern "C" int fstat(int fd, struct stat* st)
+{
+  st->st_mode = S_IFCHR;
   return 0;
 }
 
@@ -33,7 +36,7 @@ extern "C" int getpid() {
 }
 
 extern "C" int isatty(int file) {
-  return 0;
+  return 1;
 }
 
 extern "C" int link(const char*, const char*) {
@@ -60,8 +63,18 @@ extern "C" int write(int file, const void* ptr, size_t len) {
 return 0;
 }
 
-extern "C" void* sbrk(ptrdiff_t incr) {
-	return (void*)-1;
+extern "C" void* sbrk(ptrdiff_t incr)
+{
+    static_assert(sizeof(uintptr_t) == sizeof(ptrdiff_t), "types mismatch");
+    static uintptr_t& heapEnd = kernel::OS::instance().get_heap_end();
+    if((heapEnd + incr) > kernel::OS::instance().get_heap_limit())
+    {
+        errno = ENOMEM;
+        return (void*)-1;
+    }
+    uintptr_t heapCurrent = heapEnd;
+    heapEnd += incr;
+    return reinterpret_cast<void*>(heapCurrent);
 }
 
 

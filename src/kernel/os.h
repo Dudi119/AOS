@@ -11,15 +11,25 @@ namespace kernel{
     class OS
     {
     public:
-        static void init(const boot::MultiBootInfoReader& reader);
+        static OS& instance()
+        {
+            static OS instance;
+            return instance;
+        }
+        void init(const boot::MultiBootInfoReader& reader);
+        uintptr_t& get_heap_begin() {return m_heapBegin;}
+        uintptr_t& get_heap_end() {return m_heapEnd;}
+        uintptr_t get_heap_limit() const {return m_heapLimit;}
         
     private:
-        static void init_c_runtime();
-        static void init_heap(const boot::MultiBootInfoReader& reader);
+        OS() = default;
+        void init_c_runtime();
+        void init_heap(const boot::MultiBootInfoReader& reader);
         
     private:
-        static _reent m_reent;
-        static caddr_t m_heapBegin;
-        static caddr_t m_heapEnd;
+        _reent m_reent;
+        uintptr_t m_heapBegin;
+        uintptr_t m_heapEnd;
+        uintptr_t m_heapLimit;
     };
 }

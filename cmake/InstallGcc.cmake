@@ -11,11 +11,6 @@ if (NOT GCC_FOUND)
             DEPENDS             ${DEPENDENCY_ON_BINUTILS}
             )
 
-    ExternalProject_Add_Step(GCC GCC_COPY_HEADERS
-            COMMAND     mv ${AOS_SYSROOT}/${AOS_TARGET}/lib/gcc/i686-elf/${GCC_VERSION}/include ${AOS_SYSROOT}/${AOS_TARGET}/include/gcc
-            DEPENDEES   install
-            )
-
     set(DEPENDENCY_ON_GCC GCC)
 
     set (GCC_ROOT_DIR          ${AOS_SYSROOT})

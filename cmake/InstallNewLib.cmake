@@ -2,7 +2,7 @@ if (NOT NEWLIB_FOUND)
     ExternalProject_Add(NEWLIB
             DOWNLOAD_NAME       newlib-2.3.0.20160104.tar.gz
             URL                 ftp://sourceware.org/pub/newlib/newlib-2.3.0.20160104.tar.gz
-            CONFIGURE_COMMAND   mkdir <SOURCE_DIR>/build && cd <SOURCE_DIR>/build && bash -c "CFLAGS=-I${AOS_SYSROOT}/${AOS_TARGET}/include/gcc/ ../configure --target=${AOS_TARGET} --prefix=${AOS_SYSROOT}"
+            CONFIGURE_COMMAND   mkdir <SOURCE_DIR>/build && cd <SOURCE_DIR>/build && bash -c "CFLAGS='-g -O0' ../configure --target=${AOS_TARGET} --prefix=${AOS_SYSROOT}"
             BUILD_COMMAND       cd <SOURCE_DIR>/build && make all
             INSTALL_COMMAND     cd <SOURCE_DIR>/build && make install
             TEST_COMMAND        ""

@@ -12,8 +12,8 @@ namespace boot{
     
         bool is_high_memory_valid() const { return m_is_high_memory_valid;}
         bool is_memory_map_valid() const { return m_is_memory_map_valid;}
-        caddr_t get_high_memory_low() const {return m_high_memory_low;};
-        caddr_t get_high_memory_high() const {return m_high_memory_high;};
+        uintptr_t get_high_memory_low() const {return m_high_memory_low;};
+        uintptr_t get_high_memory_high() const {return m_high_memory_high;};
     
     private:
         const unsigned long memory_limit_granularity = 1024;
@@ -67,7 +67,7 @@ namespace boot{
         multiboot_info& m_info;
         bool m_is_high_memory_valid;
         bool m_is_memory_map_valid;
-        caddr_t m_high_memory_low;
-        caddr_t m_high_memory_high;
+        uintptr_t m_high_memory_low;
+        uintptr_t m_high_memory_high;
     };
 }

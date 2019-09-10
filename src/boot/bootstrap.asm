@@ -19,11 +19,12 @@
 //GDT for flat memory model
 .align 4
 gdtr:
-	.2byte gdt32mod_end -gdt32mod -1
+	.2byte gdt32mod_end - gdt32mod -1
 	.4byte gdt32mod
+	.4byte 0x0
 gdt32mod:
 	//Entry 0x0: Null desriptor
-	.8byte 0x0000000000000000
+	.8byte 0x0
 	//Entry 0x8: Code segment
 	.2byte 0xffff		       //Limit
   	.2byte 0x0000		       //Base 15:00
@@ -67,6 +68,9 @@ _protected_mod:
 	push %ebx //Push magic value
 	call _main 
 	//if exit, disable interrupts and loop
+.global _panic
+.type _panic, @function
+_panic:
 	cli
 b:	hlt
 	jmp b
