@@ -2,6 +2,8 @@
 #include "boot/multiboot_info_reader.h"
 #include "hardware/machine.h"
 #include "hardware/memory.h"
+#include "hardware/video_memory.h"
+#include "file_descriptor.h"
 
 extern "C" char _end;
 extern "C" void(_init)(void);
@@ -16,9 +18,11 @@ namespace kernel{
         init_heap(reader);
         _init();
         
-        hw::Memory& memory = hw::Machine::instance().get_memory();
+        hw::Memory& memory = hw::Machine::instance().get_mutable_memory();
         memory.add_memory_region(hw::VIDEO_MEMORY_MONO_TEXT, 0xB0000, 0xB7FFF);
         memory.add_memory_region(hw::VIDEO_MEMORY_COLOR_TEXT, 0xB8000, 0xBFFFF);
+    
+        init_file_descriptors();
     }
     
     void OS::init_c_runtime()
@@ -32,5 +36,24 @@ namespace kernel{
         m_heapBegin = reader.get_high_memory_low();
         m_heapEnd = m_heapBegin;
         m_heapLimit = reader.get_high_memory_high();
+    }
+    
+    void OS::init_file_descriptors()
+    {
+        FileDescriptorHandler::HandlerPtr handlerPtr =
+                hw::create_video_memory(hw::MemoryType::VIDEO_MEMORY_MONO_TEXT);
+        m_descriptors.insert({DescriptorTypes::STD_OUT,
+                              FileDescriptor(DescriptorTypes::STD_OUT, std::move(handlerPtr))});
+    }
+    
+    FileDescriptor& OS::get_file_descriptor(FileDescriptor::Id id)
+    {
+        Descriptors::iterator it = m_descriptors.find(id);
+        if(it == m_descriptors.end())
+        {
+            //throw exception once supported
+            hw::Machine::panic();
+        }
+        return it->second;
     }
 }

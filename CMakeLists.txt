@@ -1,6 +1,6 @@
 project(AOS CXX)
 cmake_minimum_required(VERSION 3.5.1)
-#set (CMAKE_CXX_STANDARD 14)
+set (CMAKE_CXX_STANDARD 14)
 
 set(AOS_SYSROOT "${CMAKE_CURRENT_SOURCE_DIR}/cross" CACHE STRING "cross sysroot")
 set(AOS_3RD_LOC "${PROJECT_BINARY_DIR}/Third_Party" CACHE STRING "third party download location")
@@ -35,16 +35,16 @@ include(installThirdParty)
 
 set(AOS_SRC "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(AOS_INCLUDE_DIRS "-I${CMAKE_CURRENT_SOURCE_DIR}/src -I${AOS_SYSROOT}/${AOS_TARGET}/include/cxx -I${AOS_SYSROOT}/${AOS_TARGET}/include/cxxabi -I${AOS_SYSROOT}/${AOS_TARGET}/include -I${AOS_SYSROOT}/${AOS_TARGET}/include/gcc")
-set(AOS_SOURCE_FILES "${AOS_SRC}/kernel/kernel_main.cpp ${AOS_SRC}/kernel/systemcalls.cpp ${AOS_SRC}/kernel/os.cpp ${AOS_SRC}/boot/multiboot_info_reader.cpp ${AOS_SRC}/hardware/memory.cpp ${AOS_SRC}/hardware/machine.cpp")
+set(AOS_SOURCE_FILES "${AOS_SRC}/kernel/kernel_main.cpp ${AOS_SRC}/kernel/systemcalls.cpp ${AOS_SRC}/kernel/os.cpp ${AOS_SRC}/boot/multiboot_info_reader.cpp ${AOS_SRC}/hardware/memory.cpp ${AOS_SRC}/hardware/machine.cpp ${AOS_SRC}/hardware/video_memory.cpp")
 set(AOS_CXX_FLAGS "-std=c++14 -ffreestanding -fno-exceptions -g -O0 -Wall -Wextra -Wno-unused-parameter -fno-rtti")
 set(AOS_LINKER_FLAGS "-ffreestanding -g -O0 -nostdlib")
 set(AOS_GCC_CRT_PREFIX "${AOS_SYSROOT}/${AOS_TARGET}/lib/gcc/i686-elf/5.1.0")
-set(AOS_LINKED_LIBS "-L${AOS_SYSROOT}/${AOS_TARGET}/lib -L${AOS_GCC_CRT_PREFIX} -lcxx -lcxxabi -lc -lm -lgcc")
-set(AOS_CXX_DEFINES "-D_LIBCPP_HAS_NO_THREADS -D_LIBCPP_NO_EXCEPTIONS")
+set(AOS_LINKED_LIBS "-L${AOS_SYSROOT}/${AOS_TARGET}/lib -L${AOS_GCC_CRT_PREFIX} -lcxx -lcxxabi -lm -lc -lgcc")
+set(AOS_CXX_DEFINES "-D_LIBCPP_HAS_NO_THREADS -D_LIBCPP_NO_EXCEPTIONS -D_LDBL_EQ_DBL")
 
 add_definitions(${AOS_CXX_DEFINES})
 include_directories(${AOS_SYSROOT}/${AOS_TARGET}/include/cxx ${CMAKE_CURRENT_SOURCE_DIR}/src ${AOS_SYSROOT}/${AOS_TARGET}/include/cxxabi ${AOS_SYSROOT}/${AOS_TARGET}/include ${AOS_SYSROOT}/${AOS_TARGET}/include/gcc)
-#add_library(AOS SHARED ${AOS_SRC}/kernel/kernel_main.cpp ${AOS_SRC}/kernel/systemcalls.cpp ${AOS_SRC}/kernel/os.cpp ${AOS_SRC}/boot/multiboot_info_reader.cpp ${AOS_SRC}/hardware/memory.cpp)
+#add_library(AOS SHARED ${AOS_SRC}/kernel/kernel_main.cpp ${AOS_SRC}/kernel/systemcalls.cpp ${AOS_SRC}/kernel/os.cpp ${AOS_SRC}/boot/multiboot_info_reader.cpp ${AOS_SRC}/hardware/memory.cpp ${AOS_SRC}/hardware/video_memory.cpp)
 #set_target_properties(AOS PROPERTIES LINKER_LANGUAGE CXX)
 
 add_custom_target(aos ALL

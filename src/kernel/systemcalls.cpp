@@ -4,6 +4,7 @@
 #include <string.h>
 #include <signal.h>
 #include "os.h"
+#include "file_descriptor.h"
 
 extern "C" void _exit(int) {
   
@@ -59,8 +60,11 @@ extern "C" int read(int, void*, size_t) {
   return 0;
 }
 
-extern "C" int write(int file, const void* ptr, size_t len) {
-return 0;
+extern "C" int write(int file, const void* ptr, size_t len)
+{
+    kernel::FileDescriptor& descriptor = kernel::OS::instance().get_file_descriptor(kernel::DescriptorTypes::STD_OUT);
+    descriptor.handle_write(const_cast<void*>(ptr), len);
+    return 0;
 }
 
 extern "C" void* sbrk(ptrdiff_t incr)

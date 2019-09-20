@@ -1,7 +1,4 @@
 #pragma once
-#ifndef _LIBCPP_NO_EXCEPTIONS
-#define _LIBCPP_NO_EXCEPTIONS
-#endif
 #include <vector>
 
 namespace hardware{
@@ -25,7 +22,7 @@ namespace hardware{
     public:
         typedef std::vector<MemoryMappingEntry> MemoryMapping;
         void add_memory_region(MemoryType type, uintptr_t start, uintptr_t end);
-        const MemoryMappingEntry& get_memory_region(MemoryType type);
+        const MemoryMappingEntry& get_memory_region(MemoryType type) const;
         
     private:
         MemoryMapping m_mapping;

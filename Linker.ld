@@ -15,26 +15,26 @@ SECTIONS
 	.text : ALIGN(0x20)
 	{
 		*(.multiboot)
-		*(.text)
+		*(.text .text.*)
 	}
 
 	/*global costs- provilage Read-only data. */
 	.rodata : ALIGN(0x20)
 	{
-		*(.rodata)
+		*(.rodata*)
 	}
 
 	/*static storage Read-write data (initialized) */
 	.data : ALIGN(0x20)
 	{
-		*(.data)
+		*(.data .data.*)
 	}
 
 	/*static storage Read-write data (uninitialized)*/
 	.bss : ALIGN(0x20)
 	{
 		*(COMMON)
-		*(.bss)
+		*(.bss .bss.*)
 	}
 
 	_end = .;

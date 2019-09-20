@@ -1,5 +1,5 @@
 find_program(GCC_BINARY_DIR NAMES ${AOS_C_COMPILER} ${AOS_CXX_COMPILER} PATHS ${AOS_SYSROOT}/bin NO_DEFAULT_PATH)
-find_file(GCC_FILES_DIR NAMES stddef.h PATHS ${AOS_SYSROOT}/${AOS_TARGET}/include/gcc NO_DEFAULT_PATH)
+find_file(GCC_FILES_DIR NAMES stddef.h PATHS ${AOS_SYSROOT}/${AOS_TARGET}/lib/gcc/${AOS_TARGET}/5.1.0/include NO_DEFAULT_PATH)
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(GCC REQUIRED_VARS GCC_BINARY_DIR GCC_FILES_DIR)
 

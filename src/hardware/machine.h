@@ -20,7 +20,7 @@ namespace hardware {
         static void panic();
         
     private:
-        Memory& get_memory() { return m_memory; }
+        Memory& get_mutable_memory() { return m_memory; }
         friend class kernel::OS;
         
     private:

@@ -8,17 +8,19 @@ namespace hardware{
         auto it = std::find_if(m_mapping.begin(), m_mapping.end(), [&type](MemoryMappingEntry& entry){return entry.Type == type;});
         if(it != m_mapping.end())
         {
+            //throw exception once supported
             Machine::panic();
         }
         m_mapping.emplace_back(MemoryMappingEntry{type, start, end});
     }
     
-    const MemoryMappingEntry& Memory::get_memory_region(hardware::MemoryType type)
+    const MemoryMappingEntry& Memory::get_memory_region(hardware::MemoryType type) const
     {
-        auto it = std::find_if(m_mapping.begin(), m_mapping.end(), [&type](MemoryMappingEntry& entry){return entry.Type == type;});
+        auto it = std::find_if(m_mapping.begin(), m_mapping.end(), [&type](const MemoryMappingEntry& entry){return entry.Type == type;});
         if(it == m_mapping.end())
         {
             //throw exception once supported
+            Machine::panic();
         }
         return *it;
     }
