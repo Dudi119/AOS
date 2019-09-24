@@ -23,12 +23,13 @@ namespace kernel{
         uintptr_t& get_heap_end() {return m_heapEnd;}
         uintptr_t get_heap_limit() const {return m_heapLimit;}
         FileDescriptor& get_file_descriptor(FileDescriptor::Id id);
+        static void print_logo();
         
     private:
         OS() = default;
         void init_c_runtime();
         void init_heap(const boot::MultiBootInfoReader& reader);
-        void init_file_descriptors();
+        void init_file_descriptors(const boot::MultiBootInfoReader& reader);
         
     private:
         _reent m_reent;

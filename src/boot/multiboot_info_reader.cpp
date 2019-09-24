@@ -3,19 +3,37 @@
 extern "C" char _end;
 
 namespace boot{
+    
     MultiBootInfoReader::MultiBootInfoReader(multiboot_info& info, unsigned int magic)
-        :m_info(info), m_is_high_memory_valid(false), m_is_memory_map_valid(false)
+        :m_info(info), m_isHighMemoryValid(false), m_isMemoryMapValid(false)
     {
         static_assert(sizeof(caddr_t) == sizeof(uintptr_t), "mismatch between boot loader info memory value types and destination type");
         if(magic != bootloader_magic_value)
             return;
         if(m_info.flags & FlagProperty::MEMORY_VALID)
         {
-            m_high_memory_high = 0x100000 + m_info.mem_upper * memory_limit_granularity - 1;
-            m_high_memory_low = reinterpret_cast<uintptr_t>(&_end);
-            m_is_high_memory_valid = true;
+            m_highMemoryHigh = 0x100000 + m_info.mem_upper * memory_limit_granularity - 1;
+            m_highMemoryLow = reinterpret_cast<uintptr_t>(&_end);
+            m_isHighMemoryValid = true;
         }
         
-        m_is_memory_map_valid = m_info.flags & FlagProperty::MEMORY_MAP;
+        m_isMemoryMapValid = m_info.flags & FlagProperty::MEMORY_MAP;
+        
+        if(m_info.flags & FlagProperty::VIDEO_VALID)
+        {
+            m_videoMemoryInfo.Type = (FrameBufferType)m_info.framebuffer_type;
+            m_videoMemoryInfo.FrameBufferAddres = m_info.framebuffer_addr;
+            m_videoMemoryInfo.Width = m_info.framebuffer_width;
+            m_videoMemoryInfo.Height = m_info.framebuffer_height;
+            m_videoMemoryInfo.Bpps = m_info.framebuffer_bpp;
+        }
+        else
+        {
+            m_videoMemoryInfo.Type = FrameBufferType::EGA;
+            m_videoMemoryInfo.Width = VideoMemoryInfo::DEFAULT_WIDTH;
+            m_videoMemoryInfo.Height = VideoMemoryInfo::DEFAULT_HEIGHT;
+            m_videoMemoryInfo.Bpps = VideoMemoryInfo::BPPS_16;
+        }
+        
     }
 }

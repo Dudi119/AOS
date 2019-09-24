@@ -1,4 +1,5 @@
 #include "os.h"
+#include <stdio.h>
 #include "boot/multiboot_info_reader.h"
 #include "hardware/machine.h"
 #include "hardware/memory.h"
@@ -22,7 +23,7 @@ namespace kernel{
         memory.add_memory_region(hw::VIDEO_MEMORY_MONO_TEXT, 0xB0000, 0xB7FFF);
         memory.add_memory_region(hw::VIDEO_MEMORY_COLOR_TEXT, 0xB8000, 0xBFFFF);
     
-        init_file_descriptors();
+        init_file_descriptors(reader);
     }
     
     void OS::init_c_runtime()
@@ -38,10 +39,10 @@ namespace kernel{
         m_heapLimit = reader.get_high_memory_high();
     }
     
-    void OS::init_file_descriptors()
+    void OS::init_file_descriptors(const boot::MultiBootInfoReader& reader)
     {
         FileDescriptorHandler::HandlerPtr handlerPtr =
-                hw::create_video_memory(hw::MemoryType::VIDEO_MEMORY_MONO_TEXT);
+                hw::create_video_memory(reader.get_video_memory_info());
         m_descriptors.insert({DescriptorTypes::STD_OUT,
                               FileDescriptor(DescriptorTypes::STD_OUT, std::move(handlerPtr))});
     }
@@ -55,5 +56,16 @@ namespace kernel{
             hw::Machine::panic();
         }
         return it->second;
+    }
+    
+    void OS::print_logo()
+    {
+        printf("....###.....#######...######.\n");
+        printf("...##.##...##.....##.##....##\n");
+        printf("..##...##..##.....##.##......\n");
+        printf(".##.....##.##.....##..######.\n");
+        printf(".#########.##.....##.......##\n");
+        printf(".##.....##.##.....##.##....##\n");
+        printf(".##.....##..#######...######.\n");
     }
 }

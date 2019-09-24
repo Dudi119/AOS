@@ -6,18 +6,19 @@
 #include "memory.h"
 #include "machine.h"
 #include "kernel/file_descriptor.h"
+#include "boot/multiboot_info_reader.h"
 
 namespace hardware{
     template<typename SymbolPtr, std::size_t SymbolSize = sizeof(SymbolPtr)>
     class VideoMemory : public kernel::FileDescriptorHandler
     {
-    private:
+    public:
         typedef std::size_t Row;
         typedef std::size_t Column;
         typedef std::pair<Row, Column> Location;
-        
-    public:
-        VideoMemory(MemoryType type)
+        static const std::size_t SymbolSizeV = SymbolSize;
+        VideoMemory(MemoryType type, Row row, Column column)
+            :COLUMN_SIZE(column), ROW_SIZE(row)
         {
             const MemoryMappingEntry& entry = Machine::instance().get_memory().get_memory_region(type);
             m_start = reinterpret_cast<SymbolPtr*>(entry.Start);
@@ -80,27 +81,27 @@ namespace hardware{
         }
         void drop_line(Row row)
         {
-            m_current = row < (ROW_SIZE - 1) ? m_start + (row + 1) * COLUMN_SIZE :
-                    m_start + (ROW_SIZE - 1) * COLUMN_SIZE;
+            m_current = row < (ROW_SIZE - 1) ? m_start + (row + 1) * COLUMN_SIZE * SymbolSize :
+                    m_start + (ROW_SIZE - 1) * COLUMN_SIZE * SymbolSize;
         }
         
     protected:
-        static const std::size_t COLUMN_SIZE = 25;
-        static const std::size_t ROW_SIZE = 80;
+        const std::size_t COLUMN_SIZE;
+        const std::size_t ROW_SIZE;
         SymbolPtr* m_start;
         SymbolPtr* m_end;
         SymbolPtr* m_current;
     };
     
-    enum VGAColor : char
+    enum VGAColor : uint8_t
     {
-    
+        COLOR_WHITE = 15
     };
     
     class ColorTextVideoMemory : public VideoMemory<uint16_t>
     {
     public:
-        ColorTextVideoMemory();
+        ColorTextVideoMemory(Row row, Column column);
         ~ColorTextVideoMemory() override = default;
         
     private:
@@ -110,12 +111,12 @@ namespace hardware{
     class TextVideoMemory : public VideoMemory<uint8_t>
     {
     public:
-        TextVideoMemory();
+        TextVideoMemory(Row row, Column column);
         ~TextVideoMemory() override = default;
         
     private:
         void write_symbols(uint8_t*& value, std::size_t symbolsToWrite) override;
     };
     
-    kernel::FileDescriptorHandler::HandlerPtr create_video_memory(MemoryType type);
+    kernel::FileDescriptorHandler::HandlerPtr create_video_memory(const boot::VideoMemoryInfo& videoInfo);
 }

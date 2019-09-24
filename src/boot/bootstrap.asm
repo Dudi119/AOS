@@ -1,7 +1,8 @@
-.set MBALIGN,  1<<0
-.set MEMINFO,  1<<1
+.set MBALIGN,   1<<0
+.set MEMINFO,   1<<1
+.set VIDEOINFO, 1<<2
 .set MAGIC,    0x1BADB002
-.set FLAGS,    MBALIGN | MEMINFO
+.set FLAGS,    MBALIGN | MEMINFO | VIDEOINFO
 .set CHECKSUM, -(MAGIC + FLAGS)
 .set null_selector, 0x0
 .set code_segment_selector, 0x8
@@ -12,6 +13,10 @@
 .4byte MAGIC
 .4byte FLAGS
 .4byte CHECKSUM
+.4byte 0x0, 0x0, 0x0, 0x0, 0x0 //binary format information
+.4byte 0x1
+.4byte 0x0, 0x0, 0x0 //Video preferences
+
 
 .extern _main
 .section .text

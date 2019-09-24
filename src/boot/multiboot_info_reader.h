@@ -5,15 +5,37 @@
 #include "multiboot.h"
 
 namespace boot{
+    enum FrameBufferType
+    {
+        INDEXED_COLOR = 0,
+        RGB,
+        EGA
+    };
+    
+    class VideoMemoryInfo
+    {
+    public:
+        static const std::size_t BPPS_8 = 8;
+        static const std::size_t BPPS_16 = 16;
+        static const std::size_t DEFAULT_WIDTH = 40;
+        static const std::size_t DEFAULT_HEIGHT = 25;
+        FrameBufferType Type;
+        uintptr_t FrameBufferAddres;
+        std::size_t Width;
+        std::size_t Height;
+        std::size_t Bpps;
+    };
+    
     class MultiBootInfoReader
     {
     public:
         MultiBootInfoReader(multiboot_info& info, unsigned int magic);
     
-        bool is_high_memory_valid() const { return m_is_high_memory_valid;}
-        bool is_memory_map_valid() const { return m_is_memory_map_valid;}
-        uintptr_t get_high_memory_low() const {return m_high_memory_low;};
-        uintptr_t get_high_memory_high() const {return m_high_memory_high;};
+        bool is_high_memory_valid() const { return m_isHighMemoryValid;}
+        bool is_memory_map_valid() const { return m_isMemoryMapValid;}
+        uintptr_t get_high_memory_low() const {return m_highMemoryLow;};
+        uintptr_t get_high_memory_high() const {return m_highMemoryHigh;};
+        const VideoMemoryInfo& get_video_memory_info() const { return m_videoMemoryInfo; }
     
     private:
         const unsigned long memory_limit_granularity = 1024;
@@ -21,7 +43,8 @@ namespace boot{
         enum FlagProperty : unsigned long
         {
             MEMORY_VALID = 0x1,
-            MEMORY_MAP = 0x40
+            MEMORY_MAP = 0x40,
+            VIDEO_VALID = 0x1000
         };
         /*
         class MemoryMap
@@ -65,9 +88,10 @@ namespace boot{
     */
     private:
         multiboot_info& m_info;
-        bool m_is_high_memory_valid;
-        bool m_is_memory_map_valid;
-        uintptr_t m_high_memory_low;
-        uintptr_t m_high_memory_high;
+        bool m_isHighMemoryValid;
+        bool m_isMemoryMapValid;
+        uintptr_t m_highMemoryLow;
+        uintptr_t m_highMemoryHigh;
+        VideoMemoryInfo m_videoMemoryInfo;
     };
 }
