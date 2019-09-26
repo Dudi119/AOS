@@ -17,7 +17,7 @@ namespace boot{
     public:
         static const std::size_t BPPS_8 = 8;
         static const std::size_t BPPS_16 = 16;
-        static const std::size_t DEFAULT_WIDTH = 40;
+        static const std::size_t DEFAULT_WIDTH = 80;
         static const std::size_t DEFAULT_HEIGHT = 25;
         FrameBufferType Type;
         uintptr_t FrameBufferAddres;
