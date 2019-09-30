@@ -6,7 +6,7 @@ namespace hardware{
             :VideoMemory(MemoryType::VIDEO_MEMORY_COLOR_TEXT, row, column)
     {
         clear_screen();
-        m_current = m_start;
+        set_current_location(ROW_SIZE - 1, 0);
     }
     
     void ColorTextVideoMemory::write_symbols(uint8_t* value, std::size_t symbolsToWrite)
@@ -22,11 +22,22 @@ namespace hardware{
         m_current += symbolsToWrite;
     }
     
+    ColorTextVideoMemory::BufferGuard ColorTextVideoMemory::get_row_value(unsigned long row)
+    {
+        ColorTextVideoMemory::BufferGuard outBuffer(new uint8_t[COLUMN_SIZE + 1], [](uint8_t* ptr){delete [] ptr;});
+        uint16_t* rowBuffer = get_row_buffer(row);
+        for(std::size_t idx = 0; idx < COLUMN_SIZE; idx++)
+        {
+            *(outBuffer.get() + idx) = static_cast<uint8_t>(0xFF & *(rowBuffer + idx));
+        }
+        outBuffer.get()[COLUMN_SIZE] = '\0';
+        return std::move(outBuffer);
+    }
+    
     TextVideoMemory::TextVideoMemory(Row row, Column column)
         :VideoMemory(MemoryType::VIDEO_MEMORY_MONO_TEXT, row, column)
     {
         clear_screen();
-        m_current = m_start;
     }
     
     
@@ -34,6 +45,18 @@ namespace hardware{
     {
         std::memcpy(m_current, value, symbolsToWrite);
         m_current += symbolsToWrite;
+    }
+    
+    TextVideoMemory::BufferGuard TextVideoMemory::get_row_value(unsigned long row)
+    {
+        TextVideoMemory::BufferGuard outBuffer(new uint8_t[COLUMN_SIZE + 1], [](uint8_t* ptr){delete [] ptr;});
+        uint8_t* rowBuffer = get_row_buffer(row);
+        for(std::size_t idx = 0; idx < COLUMN_SIZE; idx++)
+        {
+            *(outBuffer.get() + idx) = *(rowBuffer + idx);
+        }
+        outBuffer.get()[COLUMN_SIZE] = '\0';
+        return std::move(outBuffer);
     }
     
     kernel::FileDescriptorHandler::HandlerPtr create_video_memory(const boot::VideoMemoryInfo& videoInfo)
