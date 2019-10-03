@@ -6,7 +6,6 @@ namespace hardware{
             :VideoMemory(MemoryType::VIDEO_MEMORY_COLOR_TEXT, row, column)
     {
         clear_screen();
-        set_current_location(ROW_SIZE - 1, 0);
     }
     
     void ColorTextVideoMemory::write_symbols(uint8_t* value, std::size_t symbolsToWrite)

@@ -18,6 +18,10 @@ namespace boot{
         }
         
         m_isMemoryMapValid = m_info.flags & FlagProperty::MEMORY_MAP;
+        if(m_isMemoryMapValid)
+        {
+            m_mmap = MemoryMap(reinterpret_cast<multiboot_memory_map_t*>(m_info.mmap_addr), m_info.mmap_length / sizeof(multiboot_memory_map_t));
+        }
         
         if(m_info.flags & FlagProperty::VIDEO_VALID)
         {
@@ -34,6 +38,10 @@ namespace boot{
             m_videoMemoryInfo.Height = VideoMemoryInfo::DEFAULT_HEIGHT;
             m_videoMemoryInfo.Bpps = VideoMemoryInfo::BPPS_16;
         }
-        
+    }
+    
+    MultiBootInfoReader::MemoryMap::MemoryMap(multiboot_memory_map_t* memoryMap, std::size_t count)
+        :m_begin(memoryMap), m_end(memoryMap + count), m_count(count)
+    {
     }
 }

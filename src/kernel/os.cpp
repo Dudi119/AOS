@@ -4,6 +4,7 @@
 #include "hardware/machine.h"
 #include "hardware/memory.h"
 #include "hardware/video_memory.h"
+#include "utils/logger.h"
 #include "file_descriptor.h"
 
 extern "C" char _end;
@@ -22,8 +23,18 @@ namespace kernel{
         hw::Memory& memory = hw::Machine::instance().get_mutable_memory();
         memory.add_memory_region(hw::VIDEO_MEMORY_MONO_TEXT, 0xB0000, 0xB7FFF);
         memory.add_memory_region(hw::VIDEO_MEMORY_COLOR_TEXT, 0xB8000, 0xBFFFF);
-    
+        
         init_file_descriptors(reader);
+        print_logo();
+    
+        if(reader.is_memory_map_valid())
+        {
+            TRACE_INFO("Memory regions:\n");
+            boot::MultiBootInfoReader& mutableReader = const_cast<boot::MultiBootInfoReader&>(reader);
+            for(auto mmapEntry : mutableReader.get_memory_map())
+                TRACE_INFO("memory map addr begin - %#08x, add end - %#08x\n", static_cast<multiboot_uint32_t>(mmapEntry.addr),
+                        static_cast<multiboot_uint32_t>(mmapEntry.addr + mmapEntry.len - 1));
+        }
     }
     
     void OS::init_c_runtime()
@@ -67,5 +78,6 @@ namespace kernel{
         printf("                         .#########.##.....##.......##                         \n");
         printf("                         .##.....##.##.....##.##....##                         \n");
         printf("                         .##.....##..#######...######.                         \n");
+        printf("                                                                               \n");
     }
 }

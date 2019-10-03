@@ -35,7 +35,7 @@ include(installThirdParty)
 
 set(AOS_SRC "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(AOS_INCLUDE_DIRS "-I${CMAKE_CURRENT_SOURCE_DIR}/src -I${AOS_SYSROOT}/${AOS_TARGET}/include/cxx -I${AOS_SYSROOT}/${AOS_TARGET}/include/cxxabi -I${AOS_SYSROOT}/${AOS_TARGET}/include -I${AOS_SYSROOT}/${AOS_TARGET}/include/gcc")
-set(AOS_SOURCE_FILES "${AOS_SRC}/kernel/kernel_main.cpp ${AOS_SRC}/kernel/systemcalls.cpp ${AOS_SRC}/kernel/os.cpp ${AOS_SRC}/boot/multiboot_info_reader.cpp ${AOS_SRC}/hardware/memory.cpp ${AOS_SRC}/hardware/machine.cpp ${AOS_SRC}/hardware/video_memory.cpp")
+set(AOS_SOURCE_FILES "${AOS_SRC}/kernel/kernel_main.cpp ${AOS_SRC}/kernel/systemcalls.cpp ${AOS_SRC}/kernel/os.cpp ${AOS_SRC}/boot/multiboot_info_reader.cpp ${AOS_SRC}/hardware/memory.cpp ${AOS_SRC}/hardware/machine.cpp ${AOS_SRC}/hardware/video_memory.cpp ${AOS_SRC}/utils/logger.cpp")
 set(AOS_CXX_FLAGS "-std=c++14 -ffreestanding -fno-exceptions -g -O0 -Wall -Wextra -Wno-unused-parameter -fno-rtti")
 set(AOS_LINKER_FLAGS "-ffreestanding -g -O0 -nostdlib")
 set(AOS_GCC_CRT_PREFIX "${AOS_SYSROOT}/${AOS_TARGET}/lib/gcc/i686-elf/5.1.0")
@@ -44,8 +44,8 @@ set(AOS_CXX_DEFINES "-D_LIBCPP_HAS_NO_THREADS -D_LIBCPP_NO_EXCEPTIONS -D_LDBL_EQ
 
 add_definitions(${AOS_CXX_DEFINES})
 include_directories(${AOS_SYSROOT}/${AOS_TARGET}/include/cxx ${CMAKE_CURRENT_SOURCE_DIR}/src ${AOS_SYSROOT}/${AOS_TARGET}/include/cxxabi ${AOS_SYSROOT}/${AOS_TARGET}/include ${AOS_SYSROOT}/${AOS_TARGET}/include/gcc)
-#add_library(AOS SHARED ${AOS_SRC}/kernel/kernel_main.cpp ${AOS_SRC}/kernel/systemcalls.cpp ${AOS_SRC}/kernel/os.cpp ${AOS_SRC}/boot/multiboot_info_reader.cpp ${AOS_SRC}/hardware/memory.cpp ${AOS_SRC}/hardware/video_memory.cpp)
-#set_target_properties(AOS PROPERTIES LINKER_LANGUAGE CXX)
+add_library(AOS SHARED ${AOS_SRC}/kernel/kernel_main.cpp ${AOS_SRC}/kernel/systemcalls.cpp ${AOS_SRC}/kernel/os.cpp ${AOS_SRC}/boot/multiboot_info_reader.cpp ${AOS_SRC}/hardware/memory.cpp ${AOS_SRC}/hardware/video_memory.cpp ${AOS_SRC}/utils/logger.cpp)
+set_target_properties(AOS PROPERTIES LINKER_LANGUAGE CXX)
 
 add_custom_target(aos ALL
                   COMMAND bash -c "${AOS_SYSROOT}/bin/${AOS_CXX_COMPILER} -c ${AOS_INCLUDE_DIRS} ${AOS_CXX_FLAGS} ${AOS_CXX_DEFINES} ${AOS_SOURCE_FILES}"
